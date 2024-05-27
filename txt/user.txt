@@ -1,0 +1,66 @@
+users.post('/login', function(req, res) {
+
+    var appData = {};
+    var email = req.body.email;
+    var password = req.body.password;
+
+    database.connection.getConnection(function(err, connection) {
+        if (err) {
+            appData["error"] = 1;
+            appData["data"] = "Internal Server Error";
+            res.status(500).json(appData);
+        } else {
+            connection.query('SELECT * FROM users WHERE email = ?', [email], function(err, rows, fields) {
+                if (err) {
+                    appData.error = 1;
+                    appData["data"] = "Error Occured!";
+                    res.status(400).json(appData);
+                } else {
+                    if (rows.length > 0) {
+                        if (rows[0].password == password) {
+                            let token = jwt.sign(rows[0], key, {
+                                expiresIn: 1440
+                            });
+                            appData.error = 0;
+                            appData["token"] = token;
+                            res.status(200).json(appData);
+                        } else {
+                            appData.error = 1;
+                            appData["data"] = "Email and Password does not match";
+                            res.status(204).json(appData);
+                        }
+                    } else {
+                        appData.error = 1;
+                        appData["data"] = "Email does not exists!";
+                        res.status(204).json(appData);
+                    }
+                }
+            });
+            connection.release();
+        }
+    });
+});
+
+////////////////////verify token ///////////////////
+
+// users.use((req, res, next) => {
+//   const token = req.body.token || req.headers["token"];
+//   const appData = {};
+//   if (token) {
+//     jwt.verify(token, key, (err, decoded) => {
+//       if (err) {
+//         appData["error"] = 1;
+//         appData["data"] = "Token is invalid";
+//         res.status(500).json(appData);
+//       } else {
+//         req.decoded = decoded;
+//         next();
+//       }
+//     });
+//   } else {
+//     appData["error"] = 1;
+//     appData["data"] = "Please send a token";
+//     res.status(403).json(appData);
+//   }
+// });
+

@@ -1,0 +1,15 @@
+POST http://localhost:3050/signup HTTP/1.1
+header: text/html
+
+first_name: "t",
+last_name: "e",
+email: "e@fjuf.com",
+password: "1",
+
+#######
+GET  http://localhost:3050/logn HTTP/1.1
+header: text/html
+
+email:"ammintechcompany@gmail.com",
+password:"1",
+token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZmlyc3RfbmFtZSI6IlRhanVkZWVuIiwibGFzdF9uYW1lIjoiTXVraHRhciIsImVtYWlsIjoiYW1pbnRlY2hjb21wYW55QGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiJDJhJDEwJGJWcHBMN0VhQmRxV1lCLkd6VE5iN2V1TmhqelVYTHlMUmVYR0xNQi5ONlk1dmE4OFR1dWRpIiwiY3JlYXRlZCI6IjIwMjQtMDUtMjdUMTM6Mzc6NDQuMDAwWiIsImlhdCI6MTcxNjgxOTM1NSwiZXhwIjoxNzE2ODI0MzU1fQ.ynC7euwFbQYi-LPnQECF2hbSTBzvIzrDg0ZQ-usSOmw"
