@@ -4,6 +4,7 @@ const db = require("../Database/database");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const session = require('express-session');
+const { authenticateJWT } = require("../export/authenticate");
 require("dotenv").config({ path: "./.env" });
 
 const secretKey = process.env.SECRET_KEY;
@@ -12,6 +13,7 @@ users.use(
     secret: process.env.SESSION_KEY, // Replace with a secure key
     resave: false,
     saveUninitialized: true,
+    cookie: { maxAge: 15 * 60 * 60 * 1000 }, 
   })
 );
 
@@ -23,10 +25,9 @@ users.get("/signup", (req, res) => {
   res.render("login");
 });
 
-// Signup Route
-users.post('/signup', (req, res) => {
+users.post("/signup", (req, res) => {
   const today = new Date();
-  const appData = { error: 1, data: '' };
+  const appData = { error: 1, data: "" };
   const userData = {
     first_name: req.body.first_name,
     last_name: req.body.last_name,
@@ -38,20 +39,24 @@ users.post('/signup', (req, res) => {
   db.getConnection((err, connection) => {
     if (err) {
       appData.error = 1;
-      appData.data = 'Internal Server Error';
-      console.error('Connection error:', err);
+      appData.data = "Internal Server Error";
+      console.error("Connection error:", err);
       res.status(500).json(appData);
     } else {
-      connection.query('INSERT INTO users SET ?', userData, (err, rows, fields) => {
+      connection.query("INSERT INTO users SET ?", userData, (err, result) => {
         if (!err) {
-          const token = jwt.sign({ id: rows.insertId }, secretKey, {
+          const userId = result.insertId;
+          const token = jwt.sign({ id: userId }, secretKey, {
             expiresIn: "15h",
           });
-          res.cookie('authToken', token, { httpOnly: true, maxAge: 15 * 60 * 60 * 1000 }); // 15 hours
-          res.redirect('dashboard', 200,{ title: 'Dashboard', message: 'User registered successfully!' });
+          res.cookie("authToken", token, {
+            httpOnly: true,
+            maxAge: 15 * 60 * 60 * 1000,
+          }); // 15 hours
+          res.redirect("/dashboard");
         } else {
-          appData.data = 'Error Occurred!';
-          console.error('Query error:', err);
+          appData.data = "Error Occurred!";
+          console.error("Query error:", err);
           res.status(400).json(appData);
         }
         connection.release(); // Release the connection
@@ -67,30 +72,23 @@ users.post("/login", (req, res) => {
   db.getConnection((err, connection) => {
     if (err) {
       console.error("Connection error:", err);
-      return res.render("login", {
-        error: "Internal Server Error",
-        email,
-        password,
-      });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
 
     connection.query(
       "SELECT * FROM users WHERE email = ?",
       [email],
-      (err, rows, fields) => {
+      (err, rows) => {
         if (err) {
           console.error("Query error:", err);
-          return res.render("login", {
-            error: "Error Occurred!",
-            email,
-            password,
-          });
+          return res.status(400).json({ error: "Error Occurred!" });
         }
 
         if (rows.length > 0) {
           if (bcrypt.compareSync(password, rows[0].password)) {
             // Compare hashed password
-            const token = jwt.sign({ id: rows[0].id }, secretKey, {
+            const userId = rows[0].id;
+            const token = jwt.sign({ id: userId }, secretKey, {
               expiresIn: "15h",
             });
             res.cookie("authToken", token, {
@@ -98,23 +96,14 @@ users.post("/login", (req, res) => {
               maxAge: 15 * 60 * 60 * 1000,
             }); // 15 hours
 
-            // Redirect to the dashboard view
-            return res.redirect("/dashboard");
+            res.redirect("/dashboard");
           } else {
-            console.log(err)
-            return res.render("login", {
-              error: "Email and Password do not match",
-              email,
-              password,
-            });
+            return res
+              .status(400)
+              .json({ error: "Email and Password do not match" });
           }
         } else {
-          console.log(err)
-          return res.render("login", {
-            error: "Email does not exist!",
-            email,
-            password,
-          });
+          return res.status(400).json({ error: "Email does not exist!" });
         }
       }
     );
@@ -123,42 +112,101 @@ users.post("/login", (req, res) => {
   });
 });
 
+users.post("/submit", authenticateJWT, (req, res) => {
+  const userId = req.userId;
+  const { urlRequest } = req.body;
 
+  if (!urlRequest) {
+    return res.status(400).json({ error: "urlRequest is required" });
+  }
 
-// Middleware to verify token
-function verifyToken(req, res, next) {
-  const token = req.cookies.authToken;
-  if (!token) {
-    return res.redirect('/login');
-  }
-  try {
-    const verified = jwt.verify(token, secretKey);
-    req.user = verified;
-    next();
-  } catch (err) {
-    res.status(400).send('Invalid token');
-  }
-}
+  // Check the request count and last request time for the user
+  db.query(
+    "SELECT request_count, last_request_time FROM user_requests WHERE user_id = ?",
+    [userId],
+    (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      let requestCount = 0;
+      let lastRequestTime = null;
+
+      if (results.length > 0) {
+        requestCount = results[0].request_count;
+        lastRequestTime = results[0].last_request_time;
+      }
+
+      // Check if last request was more than 24 hours ago
+      if (
+        lastRequestTime &&
+        Date.now() - new Date(lastRequestTime).getTime() > 24 * 60 * 60 * 1000
+      ) {
+        requestCount = 0; // Reset request count
+      }
+
+      if (requestCount >= 7) {
+        return res.json({ message: "Request limit reached" });
+      }
+
+      // Increment the request count
+      requestCount++;
+
+      // Update or insert the request count and last request time
+      db.query(
+        "INSERT INTO user_requests (user_id, request_count, last_request_time) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE request_count = ?, last_request_time = NOW()",
+        [userId, requestCount, requestCount],
+        (err, results) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Database error" });
+          }
+
+          // Insert the request
+          db.query(
+            "INSERT INTO requests (user_id, urlRequest) VALUES (?, ?)",
+            [userId, urlRequest],
+            (err, results) => {
+              if (err) {
+                console.error(err);
+                return res.status(500).json({ error: "Database error" });
+              }
+
+              res.json({ message: "Request received", requestCount });
+            }
+          );
+        }
+      );
+    }
+  );
+});
 
 
 // Protected Route Example
-users.get('/dashboard', verifyToken, (req, res) => {
+users.get("/dashboard", authenticateJWT, (req, res) => {
   db.getConnection((err, connection) => {
     if (err) {
-      console.error('Connection error:', err);
-      return res.status(500).send('Internal Server Error');
+      console.error("Connection error:", err);
+      return res.status(500).send("Internal Server Error");
     }
-    connection.query('SELECT * FROM users WHERE id = ?', [req.user.id], (err, rows) => {
-      if (err || rows.length === 0) {
-        console.error('Query error:', err);
-        return res.status(404).send('User not found');
+    connection.query(
+      "SELECT * FROM users WHERE id = ?",
+      [req.userId],
+      (err, rows) => {
+        if (err || rows.length === 0) {
+          console.error("Query error:", err);
+          return res.status(404).send("User not found");
+        }
+        const data = rows[0]
+        // console.log(data)
+        res.render("dashboard", {
+          firstname: data.first_name,
+          lastname: data.last_name
+        });
+        connection.release();
       }
-      res.render('dashboard', {
-        title: 'Dashboard',
-        message: 'Welcome to your dashboard!',
-      });
-      connection.release();
-    });
+    );
   });
 });
 

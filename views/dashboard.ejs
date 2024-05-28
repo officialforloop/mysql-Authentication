@@ -20,7 +20,7 @@
             <span class="icon">
               <ion-icon name="logo-apple"></ion-icon>
             </span>
-            <span class="title">Halal Tracker</span>
+            <span class="title"><%= firstname %> <%= lastname %></span>
           </a>
         </li>
 
@@ -123,12 +123,11 @@
 
         <div class="card">
           <div>
-            <div class="numbers">new Request</div>
-            <div class="cardName">input</div>
-          </div>
-
-          <div class="iconBx">
-            <ion-icon name="cart-outline"></ion-icon>
+            <div class="req numbers">new Request</div>
+           <form action="/submit" method="post">
+            <input type="text" name="urlRequest" id="inputField" class="request">
+            <button type="submit" class="sent" id="request">Request</button>
+           </form>
           </div>
         </div>
 
@@ -162,7 +161,6 @@
             <h2>Recent Request</h2>
             <a href="#" class="btn">View All</a>
           </div>
-
           <table>
             <thead>
               <tr>
@@ -170,7 +168,6 @@
                 <td>Status</td>
               </tr>
             </thead>
-
             <tbody>
               <tr>
                 <td>Star Refrigerator</td>
@@ -212,87 +209,6 @@
                 <td><span class="status inProgress">In Progress</span></td>
               </tr>
             </tbody>
-          </table>
-        </div>
-
-        <!-- ================= New Customers ================ -->
-        <div class="recentCustomers">
-          <div class="cardHeader">
-            <h2>Recent Request</h2>
-          </div>
-
-          <table>
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer02.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>David <br> <span>Italy</span></h4>
-              </td>
-            </tr>
-
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer01.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>Amit <br> <span>India</span></h4>
-              </td>
-            </tr>
-
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer02.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>David <br> <span>Italy</span></h4>
-              </td>
-            </tr>
-
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer01.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>Amit <br> <span>India</span></h4>
-              </td>
-            </tr>
-
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer02.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>David <br> <span>Italy</span></h4>
-              </td>
-            </tr>
-
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer01.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>Amit <br> <span>India</span></h4>
-              </td>
-            </tr>
-
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer01.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>David <br> <span>Italy</span></h4>
-              </td>
-            </tr>
-
-            <tr>
-              <td width="60px">
-                <div class="imgBx"><img src="/img/customer02.jpg" alt=""></div>
-              </td>
-              <td>
-                <h4>forloop <br> <span>Company</span></h4>
-              </td>
-            </tr>
           </table>
         </div>
       </div>

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "table": "node ./Database/table",
+    "table2": "node ./Database/table2",
     "start": "nodemon ./bin/www"
   },
   "dependencies": {

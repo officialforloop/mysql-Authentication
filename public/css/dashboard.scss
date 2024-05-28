@@ -216,7 +216,7 @@ body {
   width: 100%;
   padding: 20px;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   grid-gap: 30px;
 }
 
@@ -228,7 +228,45 @@ body {
   display: flex;
   justify-content: space-between;
   cursor: pointer;
-  box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 7px 25px rgba(7, 226, 255, 0.100);
+  .request{
+    color: var(--blue);
+    margin-top: 6px;
+  }
+  input[type="text"]{
+    border: solid #2a2185 2px;
+    width: 291px;
+    height: 35px;
+    border-radius: 10px;
+     transition: border-color 0.3s ease-in-out;
+  }
+  input[type="text"]:focus {
+    border-color: #66afe9;
+    outline: none;
+    box-shadow: 0 0 8px rgba(97, 182, 194, 0.404);
+}
+  .sent{
+    color: #eee;
+    font-family: inherit;
+    font-weight: bold;
+    text-transform: uppercase;
+    background-color: #2a2185;
+    padding: .6rem;
+    border-radius: 10px;
+    cursor: pointer;
+    outline: none;
+    border: none;
+  }
+  .sent:hover{
+    border: #eee solid 2px;
+  }
+  .sent:focus{
+    border-color: #1795ce;
+    transition: border-color 0.3s ease-in-out;
+  }
+  .req{
+    font-size: 1.2rem !important;
+  }
 }
 
 .cardBox .card .numbers {
@@ -236,6 +274,7 @@ body {
   font-weight: 500;
   font-size: 2.5rem;
   color: var(--blue);
+  text-transform: uppercase;
 }
 
 .cardBox .card .cardName {
@@ -263,10 +302,6 @@ body {
   position: relative;
   width: 100%;
   padding: 20px;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  grid-gap: 30px;
-  /* margin-top: 10px; */
 }
 
 .details .recentOrders {

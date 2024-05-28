@@ -2,11 +2,12 @@ const express = require("express");
 const createError = require("http-errors");
 const path = require("path");
 const cookieParser = require("cookie-parser");
-const logger = require("morgan");
+const logger = require("morgan"); 
 require("dotenv").config({ path: "./.env" });
 
 // const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+const { attachUserId } = require("./export/authenticate");
 
 const server = express();
 
@@ -21,7 +22,8 @@ server.use(cookieParser());
 server.use(express.static(path.join(__dirname, "public")));
 
 // server.use("/", indexRouter);
-server.use(usersRouter); // Add a prefix to the users route
+server.use(usersRouter); 
+server.use(attachUserId);
 
 // catch 404 and forward to error handler
 server.use(function (req, res, next) {
