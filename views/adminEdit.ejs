@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard</title>
+</head>
+
+<body>
+  <div class="container">
+    <h1>Edit Request</h1>
+    <form action="/edit-request/<%= request.id %>" method="post">
+      <label for="urlRequest">Original Request</label>
+      <input type="text" id="urlRequest" name="urlRequest" value="<%= request.urlRequest %>">
+
+      <label for="newRequest">New Request</label>
+      <textarea id="newRequest" name="newRequest" rows="4"><%= request.newRequest %></textarea>
+
+      <button type="submit">Save Changes</button>
+    </form>
+  </div>
+</body>
+
+</html>

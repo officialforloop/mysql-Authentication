@@ -5,8 +5,9 @@ const cookieParser = require("cookie-parser");
 const logger = require("morgan"); 
 require("dotenv").config({ path: "./.env" });
 
-// const indexRouter = require("./routes/index");
+const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
+const adminRouter = require("./routes/admin");
 const { attachUserId } = require("./export/authenticate");
 
 const server = express();
@@ -21,7 +22,8 @@ server.use(express.urlencoded({ extended: false }));
 server.use(cookieParser());
 server.use(express.static(path.join(__dirname, "public")));
 
-// server.use("/", indexRouter);
+server.use(adminRouter);
+server.use(indexRouter);
 server.use(usersRouter); 
 server.use(attachUserId);
 

@@ -1,6 +1,4 @@
 const pool= require("./database");
-const fs = require("fs");
-const path = require("path");
 
 // Read the SQL script
 const sqlScript = `

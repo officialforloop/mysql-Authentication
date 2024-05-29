@@ -16,7 +16,7 @@ body{
     
 }
 .container{
-    height: 650px;
+    height: 590px;
     width: 410px;
     background: rgb(39 245 16 / 16%);
     border-radius: 15px;
@@ -57,11 +57,18 @@ h2{
     color: #eee;
     font-size: 44px;
 }
+.LoginBtn a{
+text-decoration: none;
+font-family: inherit;
+font-size: bold;
+color: white;
+}
+
 .input-box{
     margin: 45px 0;
     height: 40px;
     width: 300px;
-    border-bottom: 2px solid rgba(0,0,0,.5);
+    border-bottom: 2px solid #f417de;
     position: relative;
 }
 .input-box input{
@@ -71,8 +78,7 @@ h2{
     border: none;
     outline: none;
     font-size: 15px;
-    color: rgba(0,0,0,.9);
-  
+    color: rgb(255, 255, 255);
     padding: 5px 0;
     background: transparent;
 }
@@ -82,20 +88,25 @@ h2{
     transform: translateY(-56%);
     font-size: 15px;
     font-weight: 500;
-    color: #333;
+    color: #ffffff;
+    text-transform: uppercase;
 }
 .input-box i{
     position: absolute;
     left: 0px;
     transform: translateY(75%);
     font-size: 22px;
-    color: rgba(0,0,0,.5);
+    color: rgb(255, 255, 255);
 }
 input::placeholder{
     font-size: 13px;
+    color: #eee;
 }
 input#checked{
     margin-right: 3px;
+}
+input:focus{
+    background: transparent;
 }
 .forgot-section{
     display: flex;

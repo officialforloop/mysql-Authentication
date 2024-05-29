@@ -68,7 +68,7 @@ body {
 
 .navigation ul li a {
   position: relative;
-  display: block;
+  // display: block;
   width: 100%;
   display: flex;
   text-decoration: none;
@@ -239,6 +239,7 @@ body {
     height: 35px;
     border-radius: 10px;
      transition: border-color 0.3s ease-in-out;
+     padding: 1.2rem;
   }
   input[type="text"]:focus {
     border-color: #66afe9;
@@ -290,6 +291,7 @@ body {
 
 .cardBox .card:hover {
   background: var(--blue);
+  transition: background .5s ease-in;
 }
 .cardBox .card:hover .numbers,
 .cardBox .card:hover .cardName,
@@ -307,11 +309,12 @@ body {
 .details .recentOrders {
   position: relative;
   display: grid;
-  min-height: 500px;
+  // min-height: 500px;
   background: var(--white);
   padding: 20px;
   box-shadow: 0 7px 25px rgba(0, 0, 0, 0.08);
   border-radius: 20px;
+  grid-template-columns: repeat(1, 1fr);
 }
 
 .details .cardHeader {
@@ -353,12 +356,20 @@ body {
 }
 .details .recentOrders table tr td {
   padding: 10px;
+  a{
+    text-decoration: none;
+    color: var(--blue);
+    font-family: inherit;
+    font-size: bold;
+  }
 }
 .details .recentOrders table tr td:last-child {
   text-align: end;
+  padding: 2px;
 }
 .details .recentOrders table tr td:nth-child(2) {
   text-align: end;
+  padding: 2px;
 }
 .details .recentOrders table tr td:nth-child(3) {
   text-align: center;
@@ -370,6 +381,12 @@ body {
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
+  padding: .5rem;
+   a{
+    text-decoration: none;
+    font-family: inherit;
+    font-size: bold;
+  }
 }
 .status.pending {
   padding: 2px 4px;
@@ -378,6 +395,7 @@ body {
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
+  padding: .5rem;
 }
 .status.return {
   padding: 2px 4px;
@@ -386,6 +404,7 @@ body {
   border-radius: 4px;
   font-size: 14px;
   font-weight: 500;
+  padding: .5rem;
 }
 .status.inProgress {
   padding: 2px 4px;

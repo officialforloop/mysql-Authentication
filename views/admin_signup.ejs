@@ -11,7 +11,7 @@
     <div class="container">
         <div class="Form login-form">
         <h2>Login</h2>
-        <form action="/login" method="post">
+        <form action="/admin/login" method="post">
             <div class="input-box">
                 <i class='bx bxs-user'></i>
                 <label for="email">email</label>
@@ -34,21 +34,17 @@
             </div>
             <button type="submit" class="btn">Login</button>
         </form>
+        <p>Or Sign up using</p>
+        <div class="social-media">
+            <i class='bx bxl-facebook'></i>
+            <i class='bx bxl-google'></i>
+            <i class='bx bxl-twitter'></i>
+        </div>
         <p class="RegisteBtn RegiBtn"><a href="#">Register Now</a></p>
     </div>
     <div class="Form Register-form">
         <h2>Register</h2>
-        <form action="/signup" method="post">
-            <div class="input-box">
-                <i class='bx bxs-user'></i>
-                <label for="first_name">First Name</label>
-                <input type="text" name="first_name" placeholder="First Name" id="first_name" required>
-            </div>
-             <div class="input-box">
-                <i class='bx bxs-user'></i>
-                <label for="last_name">Last Name</label>
-                <input type="text" name="last_name" placeholder="Last Name" id="last_name" required>
-            </div>
+        <form action="/admin/signup" method="post">
             <div class="input-box">
                 <i class='bx bxs-user'></i>
                 <label for="email">email</label>
@@ -61,7 +57,13 @@
             </div>
             <button type="submit" class="btn loginBtn">Register</button>
         </form>
-        <p class="LoginBtn">have an account <a href="#">Login Now</a></p>
+        <p>Or Sign up using</p>
+        <div class="social-media">
+            <i class='bx bxl-facebook'></i>
+            <i class='bx bxl-google'></i>
+            <i class='bx bxl-twitter'></i>
+        </div>
+        <p class="LoginBtn"><a href="#">Login Now</a></p>
     </div>
 </div>
 <script src="/js/login.js"></script>

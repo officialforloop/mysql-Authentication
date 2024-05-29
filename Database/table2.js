@@ -30,7 +30,6 @@ CREATE TABLE IF NOT EXISTS \`user_requests\` (
 ALTER TABLE \`user_requests\`
 ADD COLUMN \`last_request_time\` DATETIME DEFAULT NULL;
 
-
 COMMIT;
 `;
 

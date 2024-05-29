@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/css/admin.css">
+  <title>Admin Dashboard</title>
+</head>
+<body>
+  <div class="container">
+    <h1>Admin Dashboard</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>User ID</th>
+          <th>Original Request</th>
+          <th>Updated Request</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% requests.forEach(request=> { %>
+          <tr>
+            <td>
+              <%= request.id %>
+            </td>
+            <td>
+              <%= request.user_id %>
+            </td>
+            <td>
+              <%= request.urlRequest %>
+            </td>
+            <td>
+              <%= request.old_urlRequest || 'N/A' %>
+            </td>
+            <td>
+              <button class="edit-btn" onclick="toggleEditForm(<%= request.id %>)">Edit</button>
+            </td>
+            </tr>
+            <tr id="edit-form-<%= request.id %>" class="edit-form">
+              <td colspan="5">
+                <form action="/admin/edit-request/<%= request.id %>" method="post">
+                  <label for="newRequest-<%= request.id %>">New Request</label>
+                  <input type="text" id="newRequest-<%= request.id %>" name="newRequest" value="<%= request.urlRequest %>">
+                  <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+      </tbody>
+    </table>
+    <a href="/admin/logout"><button class="save-btn">logout</button></a>
+  </div>
+  <script>
+    function toggleEditForm(id) {
+      var form = document.getElementById('edit-form-' + id);
+      if (form.style.display === 'none' || form.style.display === '') {
+        form.style.display = 'table-row';
+      } else {
+        form.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>

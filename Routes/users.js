@@ -17,14 +17,6 @@ users.use(
   })
 );
 
-users.get("/login", (req, res, error) => {
-  res.render("login");
-});
-
-users.get("/signup", (req, res) => {
-  res.render("login");
-});
-
 users.post("/signup", (req, res) => {
   const today = new Date();
   const appData = { error: 1, data: "" };
@@ -120,7 +112,6 @@ users.post("/submit", authenticateJWT, (req, res) => {
     return res.status(400).json({ error: "urlRequest is required" });
   }
 
-  // Check the request count and last request time for the user
   db.query(
     "SELECT request_count, last_request_time FROM user_requests WHERE user_id = ?",
     [userId],
@@ -130,7 +121,7 @@ users.post("/submit", authenticateJWT, (req, res) => {
         return res.status(500).json({ error: "Database error" });
       }
 
-      let requestCount = 0;
+      let requestCount = 7; // Default value
       let lastRequestTime = null;
 
       if (results.length > 0) {
@@ -138,42 +129,38 @@ users.post("/submit", authenticateJWT, (req, res) => {
         lastRequestTime = results[0].last_request_time;
       }
 
-      // Check if last request was more than 24 hours ago
       if (
         lastRequestTime &&
         Date.now() - new Date(lastRequestTime).getTime() > 24 * 60 * 60 * 1000
       ) {
-        requestCount = 0; // Reset request count
+        requestCount = 7; // Reset request count
       }
 
-      if (requestCount >= 7) {
-        return res.json({ message: "Request limit reached" });
+      if (requestCount <= 0) {
+        return res.status(400).json({ message: "Request limit reached" });
       }
 
-      // Increment the request count
-      requestCount++;
+      requestCount--;
 
-      // Update or insert the request count and last request time
       db.query(
         "INSERT INTO user_requests (user_id, request_count, last_request_time) VALUES (?, ?, NOW()) ON DUPLICATE KEY UPDATE request_count = ?, last_request_time = NOW()",
         [userId, requestCount, requestCount],
-        (err, results) => {
+        (err) => {
           if (err) {
             console.error(err);
             return res.status(500).json({ error: "Database error" });
           }
 
-          // Insert the request
           db.query(
             "INSERT INTO requests (user_id, urlRequest) VALUES (?, ?)",
             [userId, urlRequest],
-            (err, results) => {
+            (err) => {
               if (err) {
                 console.error(err);
                 return res.status(500).json({ error: "Database error" });
               }
 
-              res.json({ message: "Request received", requestCount });
+              res.redirect("/dashboard");
             }
           );
         }
@@ -183,6 +170,8 @@ users.post("/submit", authenticateJWT, (req, res) => {
 });
 
 
+
+
 // Protected Route Example
 users.get("/dashboard", authenticateJWT, (req, res) => {
   db.getConnection((err, connection) => {
@@ -190,37 +179,62 @@ users.get("/dashboard", authenticateJWT, (req, res) => {
       console.error("Connection error:", err);
       return res.status(500).send("Internal Server Error");
     }
-    connection.query(
-      "SELECT * FROM users WHERE id = ?",
-      [req.userId],
-      (err, rows) => {
-        if (err || rows.length === 0) {
-          console.error("Query error:", err);
-          return res.status(404).send("User not found");
-        }
-        const data = rows[0]
-        // console.log(data)
-        res.render("dashboard", {
-          firstname: data.first_name,
-          lastname: data.last_name
-        });
-        connection.release();
+
+    const userId = req.userId;
+
+    const query = `
+      SELECT u.first_name, u.last_name, r.*, h.old_urlRequest, ur.request_count 
+      FROM users u 
+      LEFT JOIN requests r ON u.id = r.user_id 
+      LEFT JOIN request_history h ON r.id = h.request_id 
+      LEFT JOIN user_requests ur ON u.id = ur.user_id 
+      WHERE u.id = ?;
+    `;
+
+    connection.query(query, [userId], (err, rows) => {
+      if (err) {
+        console.error("Query error:", err);
+        return res.status(500).send("Internal Server Error");
       }
-    );
+
+      if (rows.length === 0) {
+        return res.status(404).send("User not found");
+      }
+
+      const user = {
+        firstName: rows[0].first_name,
+        lastName: rows[0].last_name,
+        requests: rows.map((row) => ({
+          id: row.id,
+          urlRequest: row.urlRequest,
+          old_urlRequest: row.old_urlRequest,
+        })),
+      };
+
+      const dailyRequestCount =
+        rows[0].request_count !== null ? rows[0].request_count : 7;
+
+      res.render("dashboard", {
+        user,
+        dailyRequestCount,
+      });
+      connection.release();
+    });
   });
 });
+
+
 
 users.get("/logout", (req, res) => {
   res.clearCookie("authToken");
   console.log("logout successfully");
-  res.redirect("login", 200);
+  res.redirect("login");
 });
 
-
-// Logout Route
-// users.post('/logout', (req, res) => {
-//   res.clearCookie('authToken');
-//   console.log('logout successfully')
-// });
+users.get("/admin/logout", (req, res) => {
+  res.clearCookie("adToken");
+  console.log("logout successfully");
+  res.redirect("/admin/login");
+});
 
 module.exports = users;

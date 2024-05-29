@@ -20,7 +20,10 @@
             <span class="icon">
               <ion-icon name="logo-apple"></ion-icon>
             </span>
-            <span class="title"><%= firstname %> <%= lastname %></span>
+            <span class="title">
+              <%= user.firstName %>
+                <%= user.lastName %>
+            </span>
           </a>
         </li>
 
@@ -68,7 +71,7 @@
             <span class="title">Settings</span>
           </a>
         </li>
-<!-- 
+        <!-- 
         <li>
           <a href="#">
             <span class="icon">
@@ -112,7 +115,7 @@
       <div class="cardBox">
         <div class="card">
           <div>
-            <div class="numbers">7</div>
+            <div class="numbers"><%= dailyRequestCount %></div>
             <div class="cardName">Daily Request</div>
           </div>
 
@@ -124,37 +127,16 @@
         <div class="card">
           <div>
             <div class="req numbers">new Request</div>
-           <form action="/submit" method="post">
-            <input type="text" name="urlRequest" id="inputField" class="request">
-            <button type="submit" class="sent" id="request">Request</button>
-           </form>
+            <form action="/submit" method="post">
+              <input type="text" name="urlRequest" id="inputField" class="request" placeholder="Make new request"
+                <%=dailyRequestCount <=0 ? 'disabled' : '' %>>
+              <button type="submit" class="sent" id="request" <%=dailyRequestCount <=0 ? 'class="disabled"' : '' %>
+                <%= dailyRequestCount <=0 ? 'disabled' : '' %>>Request
+              </button>
+            </form>
           </div>
         </div>
-
-        <!-- <div class="card">
-          <div>
-            <div class="numbers">284</div>
-            <div class="cardName">Comments</div>
-          </div>
-
-          <div class="iconBx">
-            <ion-icon name="chatbubbles-outline"></ion-icon>
-          </div>
-        </div>
-
-        <div class="card">
-          <div>
-            <div class="numbers">$7,842</div>
-            <div class="cardName">Earning</div>
-          </div>
-
-          <div class="iconBx">
-            <ion-icon name="cash-outline"></ion-icon>
-          </div>
-        </div> -->
       </div>
-
-      <!-- ================ Order Details List ================= -->
       <div class="details">
         <div class="recentOrders">
           <div class="cardHeader">
@@ -169,58 +151,52 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>Star Refrigerator</td>
-                <td><span class="status delivered">Delivered</span></td>
-              </tr>
-
-              <tr>
-                <td>Dell Laptop</td>
-                <td><span class="status pending">Pending</span></td>
-              </tr>
-
-              <tr>
-                <td>Apple Watch</td>
-                <td><span class="status return">Return</span></td>
-              </tr>
-
-              <tr>
-                <td>Addidas Shoes</td>
-                <td><span class="status inProgress">In Progress</span></td>
-              </tr>
-
-              <tr>
-                <td>Star Refrigerator</td>
-                <td><span class="status delivered">Delivered</span></td>
-              </tr>
-
-              <tr>
-                <td>Dell Laptop</td>
-                <td><span class="status pending">Pending</span></td>
-              </tr>
-
-              <tr>
-                <td>Apple Watch</td>
-                <td><span class="status return">Return</span></td>
-              </tr>
-
-              <tr>
-                <td>Addidas Shoes</td>
-                <td><span class="status inProgress">In Progress</span></td>
-              </tr>
+              <% user.requests.forEach(request=> { %>
+                <tr>
+                  <td>
+                    <% if (request.urlRequest) { %>
+                      <a href="<%= request.urlRequest %>" target="_blank">
+                        <%= request.urlRequest %>
+                      </a>
+                      <% } else { %>
+                        <span>no request used today</span>
+                        <% } %>
+                  </td>
+                  <td>
+                    <% if (request.old_urlRequest) { %>
+                      <a href="<%= request.old_urlRequest %>" target="_blank">
+                        <span class="status delivered">Download</span>
+                      </a>
+                      <% } else { %>
+                        <span class="status pending">Pending</span>
+                        <% } %>
+                  </td>
+                </tr>
+                <% }); %>
             </tbody>
           </table>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- =========== Scripts =========  -->
-  <script src="/js/dashboard.js"></script>
+    <!-- =========== Scripts =========  -->
+    <script src="/js/dashboard.js"></script>
 
-  <!-- ====== ionicons ======= -->
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <!-- ====== ionicons ======= -->
+    <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        const requestButton = document.getElementById('request');
+        const inputField = document.getElementById('inputField');
+
+        if (<%= dailyRequestCount %> <= 0) {
+        requestButton.disabled = true;
+        inputField.disabled = true;
+        requestButton.classList.add('disabled');
+      }
+        });
+    </script>
 </body>
 
 </html>
