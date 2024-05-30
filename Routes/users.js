@@ -227,13 +227,11 @@ users.get("/dashboard", authenticateJWT, (req, res) => {
 
 users.get("/logout", (req, res) => {
   res.clearCookie("authToken");
-  console.log("logout successfully");
   res.redirect("login");
 });
 
 users.get("/admin/logout", (req, res) => {
   res.clearCookie("adToken");
-  console.log("logout successfully");
   res.redirect("/admin/login");
 });
 

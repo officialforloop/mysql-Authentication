@@ -11,7 +11,7 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS \`requests\` (
   \`id\` int(11) NOT NULL AUTO_INCREMENT,
   \`user_id\` int(11) NOT NULL,
-  \`urlRequest\` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
+  \`userRequest\` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   \`created_at\` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (\`id\`),
   KEY \`user_id\` (\`user_id\`),

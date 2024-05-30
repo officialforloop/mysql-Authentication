@@ -361,7 +361,7 @@ body {
 }
 
 .details .recentOrders table tbody tr:hover {
-  background: var(--blue);
+  background: rgba(0, 0, 0, 0.08);
   color: var(--white);
 }
 
@@ -481,7 +481,7 @@ body {
   color: var(--white);
 }
 
-.recentCustomers table tr:hover td h4 span {
+.recentCustomers table tr:hover td h4 a {
   color: var(--white);
 }
 

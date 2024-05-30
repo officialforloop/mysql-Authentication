@@ -44,7 +44,6 @@ router.get("/admin/dashboard", adminauthenticate, (req, res) => {
         console.error("Query error:", err);
         return res.status(500).send("Internal Server Error");
       }
-      console.log(requestRows)
 
       res.render("admin", {
         requests: requestRows,

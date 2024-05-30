@@ -10,7 +10,7 @@ SET time_zone = "+00:00";
 CREATE TABLE IF NOT EXISTS \`request_history\`(
   id INT AUTO_INCREMENT PRIMARY KEY,
   request_id INT NOT NULL,
-  old_urlRequest VARCHAR(255) NOT NULL,
+  admin_reply VARCHAR(255) NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (request_id) REFERENCES requests(id)
 );
